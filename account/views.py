@@ -23,7 +23,7 @@ class UserRegistrationView(APIView):
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
             token = get_tokens_for_user(user)
-            return Response({"token": token, "message": "User registration successful"}, status=status.HTTP_201_CREATED)
+            return Response({"user": serializer.data, "token": token, "message": "User registration successful"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UserLoginView(APIView):
@@ -36,7 +36,7 @@ class UserLoginView(APIView):
             user = authenticate(email=email, password=password)
             if user is not None:
                 token = get_tokens_for_user(user)
-                return Response({"token": token, "message": "Login successful"}, status=status.HTTP_200_OK)
+                return Response({"user": UserProfileSerializer(user).data, "token": token, "message": "Login successful"}, status=status.HTTP_200_OK)
             else:
                 return Response({"errors": {"non_field_errors": ["Invalid Email/Password"]}}, status=status.HTTP_404_NOT_FOUND)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -46,7 +46,7 @@ class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, format=None):
         serializer = UserProfileSerializer(request.user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({"user": serializer.data}, status=status.HTTP_200_OK)
 
 class UserChangePasswordView(APIView):
     renderer_classes = [UserRenderer]

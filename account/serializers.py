@@ -6,13 +6,14 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from account.utils import Util
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
     password_confirm = serializers.CharField(write_only=True)
     class Meta:
         model = User
-        fields = ['email', 'full_name', 'password', 'password_confirm']
-        extra_kwargs = {
-            'password': {'write_only': True},
-        }
+        fields = ['id', 'email', 'full_name', 'password', 'password_confirm']
+        # extra_kwargs = {
+        #     'password': {'write_only': True},
+        # }
 
     # validate password and password_confirm
     def validate(self, attrs):
