@@ -7,19 +7,15 @@ from account.utils import Util
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
-    password_confirm = serializers.CharField(write_only=True)
     class Meta:
         model = User
-        fields = ['id', 'email', 'full_name', 'password', 'password_confirm']
+        fields = ['id', 'email', 'full_name', 'password']
         # extra_kwargs = {
         #     'password': {'write_only': True},
         # }
 
-    # validate password and password_confirm
     def validate(self, attrs):
-        if attrs.get('password') != attrs.get('password_confirm'):
-            raise serializers.ValidationError('Passwords do not match')
-        return super().validate(attrs)
+        return attrs
     
     # create user
     def create(self, validated_data):
@@ -39,19 +35,15 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 class UserChangePasswordSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=255, min_length=8, style={'input_type':'password'}, write_only=True)
-    password_confirm = serializers.CharField(max_length=255, min_length=8, style={'input_type':'password'}, write_only=True)
     old_password = serializers.CharField(style={'input_type':'password'}, write_only=True)
     class Meta:
         model = User
-        fields = ['old_password', 'password', 'password_confirm']
+        fields = ['old_password', 'password']
 
-    # validate password and password_confirm
+    # validate password
     def validate(self, attrs):
         password = attrs.get('password')
-        password_confirm = attrs.get('password_confirm')
         user = self.context.get('user')
-        if password != password_confirm:
-            raise serializers.ValidationError("Password and Confirm Password doesn't match")
         user.set_password(password)
         user.save()
         return attrs
@@ -92,18 +84,14 @@ class SendPasswordResetEmailSerializer(serializers.Serializer):
 
 class UserPasswordResetSerializer(serializers.Serializer):
   password = serializers.CharField(max_length=255, style={'input_type':'password'}, write_only=True)
-  password_confirm = serializers.CharField(max_length=255, style={'input_type':'password'}, write_only=True)
   class Meta:
-    fields = ['password', 'password_confirm']
+    fields = ['password']
 
   def validate(self, attrs):
     try:
       password = attrs.get('password')
-      password_confirm = attrs.get('password_confirm')
       uid = self.context.get('uid')
       token = self.context.get('token')
-      if password != password_confirm:
-        raise serializers.ValidationError("Password and Confirm Password doesn't match")
       id = smart_str(urlsafe_base64_decode(uid))
       user = User.objects.get(id=id)
       if not PasswordResetTokenGenerator().check_token(user, token):
