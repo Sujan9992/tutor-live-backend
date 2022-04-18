@@ -14,4 +14,5 @@ urlpatterns = [
     path('courses_created_by_user/<int:user_id>/', getCoursesCreatedByUser, name='courses_by_user'),
     path('enrolled_courses/<int:user_id>/', getEnrolledCoursesByUser, name='enrolled_courses'),
     path('get_tutors/', getTutors, name='get_tutors'),
+    path('getTutorsByCategory/<str:title>/', getTutorsByCategory, name='get_tutors_by_category'),
 ]

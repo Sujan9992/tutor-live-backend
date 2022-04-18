@@ -135,3 +135,14 @@ def getTutors(request):
             tutorList.append(User.objects.get(id=tutor['created_by']))
         serializer = UserProfileSerializer(tutorList, many=True)
         return Response(serializer.data)
+
+@api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+def getTutorsByCategory(request, title):
+    if request.method == 'GET':
+        tutors = Course.objects.filter(category=title).distinct().values('created_by')
+        tutorList = []
+        for tutor in tutors:
+            tutorList.append(User.objects.get(id=tutor['created_by']))
+        serializer = UserProfileSerializer(tutorList, many=True)
+        return Response(serializer.data)
