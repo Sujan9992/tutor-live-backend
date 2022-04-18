@@ -4,11 +4,12 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from account.serializers import UserProfileSerializer
 
 # Create your views here.
 
 @api_view(['GET', 'POST'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def courseView(request):
     if request.method == 'GET':
         user = request.user
@@ -26,7 +27,7 @@ def courseView(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT', 'DELETE'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def manageCourseView(request, course_id):
     try:
         course = Course.objects.get(course_id=course_id)
@@ -44,7 +45,7 @@ def manageCourseView(request, course_id):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['GET', 'POST', 'PUT'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def categoryView(request):
     if request.method == 'GET':
         categories = Category.objects.all()
@@ -58,7 +59,7 @@ def categoryView(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'POST', 'PUT'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def courseScheduleView(request, course_id):
     if request.method == 'GET':
         course_schedule = CourseSchedule.objects.get(course_id=course_id)
@@ -79,7 +80,7 @@ def courseScheduleView(request, course_id):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def getAllCoursesSchedule(request):
     if request.method == 'GET':
         course_schedules = CourseSchedule.objects.all()
@@ -87,7 +88,7 @@ def getAllCoursesSchedule(request):
         return Response(serializer.data)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def getCoursesByCategory(request, title):
     if request.method == 'GET':
         courses = Course.objects.filter(category=title)
@@ -95,8 +96,8 @@ def getCoursesByCategory(request, title):
         return Response(serializer.data)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def getCoursesByCurrentUser(request):
+# @permission_classes([IsAuthenticated])
+def getCoursesCreatedByCurrentUser(request):
     if request.method == 'GET':
         user = request.user
         courses = Course.objects.filter(created_by=user)
@@ -104,10 +105,33 @@ def getCoursesByCurrentUser(request):
         return Response(serializer.data)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def getCoursesByUser(request, user_id):
+# @permission_classes([IsAuthenticated])
+def getCoursesCreatedByUser(request, user_id):
     if request.method == 'GET':
         user = User.objects.get(id=user_id)
         courses = Course.objects.filter(created_by=user)
         serializer = CourseSerializer(courses, many=True)
+        return Response(serializer.data)
+
+@api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+def getEnrolledCoursesByUser(request, user_id):
+    if request.method == 'GET':
+        user = User.objects.get(id=user_id)
+        enrolledCourses = EnrolledCourses.objects.filter(user=user)
+        courses = []
+        for enrolledCourse in enrolledCourses:
+            courses.append(enrolledCourse.course)
+        serializer = CourseSerializer(courses, many=True)
+        return Response(serializer.data)
+
+@api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+def getTutors(request):
+    if request.method == 'GET':
+        tutors = Course.objects.all().distinct().values('created_by')
+        tutorList = []
+        for tutor in tutors:
+            tutorList.append(User.objects.get(id=tutor['created_by']))
+        serializer = UserProfileSerializer(tutorList, many=True)
         return Response(serializer.data)

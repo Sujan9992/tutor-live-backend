@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path
 from .views import *
 from rest_framework_simplejwt.views import TokenObtainPairView
 
@@ -9,7 +9,9 @@ urlpatterns = [
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('course_schedule/<int:course_id>/', courseScheduleView, name='course_schedule'),
     path('all_schedules/', getAllCoursesSchedule, name='all_schedules'),
-    path('get_courses_by_category/<str:title>/', getCoursesByCategory, name='get_courses_by_category'),
-    path('get_courses_by_user/', getCoursesByCurrentUser, name='get_courses_by_user'),
-    path('get_courses_by_user/<int:user_id>/', getCoursesByUser, name='get_courses_by_user'),
+    path('courses_by_category/<str:title>/', getCoursesByCategory, name='courses_by_category'),
+    path('courses_created_by_current_user/', getCoursesCreatedByCurrentUser, name='courses_by_current_user'),
+    path('courses_created_by_user/<int:user_id>/', getCoursesCreatedByUser, name='courses_by_user'),
+    path('enrolled_courses/<int:user_id>/', getEnrolledCoursesByUser, name='enrolled_courses'),
+    path('get_tutors/', getTutors, name='get_tutors'),
 ]

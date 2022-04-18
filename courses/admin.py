@@ -22,8 +22,12 @@ class UserCoursesAdmin(admin.ModelAdmin):
 class TutorAdmin(admin.ModelAdmin):
     list_display = ['user']
 
+class EnrolledCoursesAdmin(admin.ModelAdmin):
+    list_display = ['user']
+
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Course, CourseAdmin)
 admin.site.register(UserCourses, UserCoursesAdmin)
 admin.site.register(Tutor, TutorAdmin)
 admin.site.register(CourseSchedule, CourseScheduleAdmin)
+admin.site.register(EnrolledCourses, EnrolledCoursesAdmin)

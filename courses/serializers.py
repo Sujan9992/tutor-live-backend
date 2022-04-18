@@ -1,16 +1,6 @@
 from rest_framework import serializers
 from .models import *
 
-# class ImagesSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Image
-#         fields = ['image']
-
-# class CourseSPecificationSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = CourseSpecification
-#         fields = ['title']
-
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category

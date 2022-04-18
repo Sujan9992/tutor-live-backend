@@ -38,7 +38,14 @@ class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, format=None):
         serializer = UserProfileSerializer(request.user)
-        return Response({"user": serializer.data}, status=status.HTTP_200_OK)
+        return Response({'user': serializer.data}, status=status.HTTP_200_OK)
+
+class UserProfile(APIView):
+    renderer_classes = [UserRenderer]
+    permission_classes = [IsAuthenticated]
+    def get(self, request, format=None):
+        serializer = UserProfileSerializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class UserChangePasswordView(APIView):
     renderer_classes = [UserRenderer]

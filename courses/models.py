@@ -38,6 +38,7 @@ class CourseSchedule(models.Model):
     def __str__(self):
         return self.title
 
+# Delete these models if you don't want to use them
 class Tutor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     course = models.ManyToManyField(Course)
@@ -45,9 +46,17 @@ class Tutor(models.Model):
     def __str__(self):
         return self.user.full_name
 
+# Delete these models if you don't want to use them
 class UserCourses(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     course = models.ManyToManyField(Course)
 
     def __str__(self):
         return self.user.full_name
+
+class EnrolledCourses(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.course.title
