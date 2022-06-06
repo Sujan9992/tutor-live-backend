@@ -16,18 +16,25 @@ class CategoryAdmin(admin.ModelAdmin):
     list_filter = ['title']
     search_fields = ['title']
 
-class UserCoursesAdmin(admin.ModelAdmin):
-    list_display = ['user',]
-
-class TutorAdmin(admin.ModelAdmin):
-    list_display = ['user']
-
 class EnrolledCoursesAdmin(admin.ModelAdmin):
     list_display = ['user']
 
+class LessonAdmin(admin.ModelAdmin):
+    list_display = ['course_id', 'title']
+    list_filter = ['course_id',]
+
+class AssignmentAdmin(admin.ModelAdmin):
+    list_display = ['course_id', 'title']
+    list_filter = ['course_id',]
+
+class CourseProgressAdmin(admin.ModelAdmin):
+    list_display = ['user', 'course_id']
+    list_filter = ['user', 'course_id']
+
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Course, CourseAdmin)
-admin.site.register(UserCourses, UserCoursesAdmin)
-admin.site.register(Tutor, TutorAdmin)
 admin.site.register(CourseSchedule, CourseScheduleAdmin)
 admin.site.register(EnrolledCourses, EnrolledCoursesAdmin)
+admin.site.register(Lesson, LessonAdmin)
+admin.site.register(Assignment, AssignmentAdmin)
+admin.site.register(CourseProgress, CourseProgressAdmin)

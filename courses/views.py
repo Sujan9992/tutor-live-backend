@@ -89,6 +89,22 @@ def getAllCoursesSchedule(request):
 
 @api_view(['GET'])
 # @permission_classes([IsAuthenticated])
+def enrolledCoursesScheduleView(request):
+    if request.method == 'GET':
+        user = request.user
+        if user:
+            user_id = user.id
+            enrolledCourses = EnrolledCourses.objects.filter(user_id=user_id)
+            courses = []
+            for enrolledCourse in enrolledCourses:
+                course_id = enrolledCourse.course_id
+                course_schedule = CourseSchedule.objects.get(course_id=course_id)
+                courses.append(course_schedule)
+            serializer = CourseScheduleSerializer(courses, many=True)
+            return Response(serializer.data)
+
+@api_view(['GET'])
+# @permission_classes([IsAuthenticated])
 def getCoursesByCategory(request, title):
     if request.method == 'GET':
         courses = Course.objects.filter(category=title)
@@ -115,15 +131,39 @@ def getCoursesCreatedByUser(request, user_id):
 
 @api_view(['GET'])
 # @permission_classes([IsAuthenticated])
-def getEnrolledCoursesByUser(request, user_id):
+def getEnrolledCourses(request):
     if request.method == 'GET':
-        user = User.objects.get(id=user_id)
-        enrolledCourses = EnrolledCourses.objects.filter(user=user)
-        courses = []
-        for enrolledCourse in enrolledCourses:
-            courses.append(enrolledCourse.course)
-        serializer = CourseSerializer(courses, many=True)
-        return Response(serializer.data)
+        user = request.user
+        if user:
+            user_id = user.id
+            enrolledCourses = EnrolledCourses.objects.filter(user=user_id)
+            courses = []
+            for enrolledCourse in enrolledCourses:
+                course_id = enrolledCourse.course_id
+                course = Course.objects.get(course_id=course_id)
+                courses.append(course)
+            serializer = CourseSerializer(courses, many=True)
+            return Response(serializer.data)
+
+@api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+def getCourseProgress(request, course_id):
+    if request.method == 'GET':
+        user = request.user
+        if user:
+            user_id = user.id
+            enrolledCourses = EnrolledCourses.objects.filter(user=user_id)
+            courses = []
+            for enrolledCourse in enrolledCourses:
+                course_id = enrolledCourse.course_id
+                course = Course.objects.get(course_id=course_id)
+                courses.append(course)
+            progress = []
+            for course in courses:
+                course_id = course.course_id
+                progress.append(CourseProgress.objects.get(course=course_id))
+            serializer = CourseProgressSerializer(progress)
+            return Response(serializer.data)
 
 @api_view(['GET'])
 # @permission_classes([IsAuthenticated])
@@ -146,3 +186,21 @@ def getTutorsByCategory(request, title):
             tutorList.append(User.objects.get(id=tutor['created_by']))
         serializer = UserProfileSerializer(tutorList, many=True)
         return Response(serializer.data)
+
+@api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+def getLessonsByCourse(request, course_id):
+    if request.method == 'GET':
+        lessons = Lesson.objects.filter(course_id=course_id)
+        serializer = LessonSerializer(lessons, many=True)
+        return Response(serializer.data)
+
+@api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+def getCourseAssignment(request, course_id):
+    if request.method == 'GET':
+        course_assignment = Assignment.objects.get(course_id=course_id)
+        serializer = AssignmentSerializer(course_assignment)
+        return Response([serializer.data])
+
+
