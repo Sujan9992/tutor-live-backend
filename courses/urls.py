@@ -21,4 +21,9 @@ urlpatterns = [
     path('getLessons/<int:course_id>/', getLessonsByCourse, name='get_lessons'),
     path('getCourseAssignment/<int:course_id>/', getCourseAssignment, name='get_course_assignment'),
     path('getCourseProgress/<int:course_id>/', getCourseProgress, name='get_course_progress'),
+    path('createSchedule/<int:course_id>/', createSchedule, name='create_schedule'),
+    path('createCourse/', createCourse, name='create_course'),
+    path('enrollCourse/<int:course_id>/', enrollCourse, name='enroll_course'),
+    path('createAssignment/<int:course_id>/', createAssignment, name='create_assignment'),
+    path('createLesson/<int:course_id>/', createLesson, name='create_lesson'),
 ]

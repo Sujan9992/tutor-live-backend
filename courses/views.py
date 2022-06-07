@@ -8,7 +8,7 @@ from account.serializers import UserProfileSerializer
 
 # Create your views here.
 
-@api_view(['GET', 'POST'])
+@api_view(['GET'])
 # @permission_classes([IsAuthenticated])
 def courseView(request):
     if request.method == 'GET':
@@ -25,6 +25,29 @@ def courseView(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+def createCourse(request):
+    if request.method == 'POST':
+        serializer = CourseSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+def enrollCourse(request, course_id):
+    if request.method == 'POST':
+        user = request.user
+        if user:
+            course = Course.objects.get(course_id=course_id)
+            EnrolledCourses.objects.create(user=user, course=course)
+            return Response(status=status.HTTP_201_CREATED)
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
 
 @api_view(['PUT', 'DELETE'])
 # @permission_classes([IsAuthenticated])
@@ -65,18 +88,15 @@ def courseScheduleView(request, course_id):
         course_schedule = CourseSchedule.objects.get(course_id=course_id)
         serializer = CourseScheduleSerializer(course_schedule)
         return Response(serializer.data)
-    elif request.method == 'POST':
+
+@api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+def createSchedule(request, course_id):
+    if request.method == 'POST':
         serializer = CourseScheduleSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    elif request.method == 'PUT':
-        course_schedule = CourseSchedule.objects.get(course_id=course_id)
-        serializer = CourseScheduleSerializer(course_schedule, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
@@ -195,6 +215,16 @@ def getLessonsByCourse(request, course_id):
         serializer = LessonSerializer(lessons, many=True)
         return Response(serializer.data)
 
+@api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+def createLesson(request, course_id):
+    if request.method == 'POST':
+        serializer = LessonSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(['GET'])
 # @permission_classes([IsAuthenticated])
 def getCourseAssignment(request, course_id):
@@ -203,4 +233,12 @@ def getCourseAssignment(request, course_id):
         serializer = AssignmentSerializer(course_assignment)
         return Response([serializer.data])
 
-
+@api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+def createAssignment(request, course_id):
+    if request.method == 'POST':
+        serializer = AssignmentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
